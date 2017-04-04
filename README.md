@@ -6,4 +6,5 @@ Slyrc is a bridge between Slack and IRC.
 ## TODO
 - [ ] Have avatars be settable per IRC user
 - [ ] Toggle between per-slack-user IRC connection and single IRC connection via the listening client
-- [ ] Support NickServ and SASL auth
+- [x] Support NickServ
+- [ ] Support SASL Auth

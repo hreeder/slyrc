@@ -1,11 +1,12 @@
 package config
 
 type ircConfiguration struct {
-	Server   string `json:"server"`
-	TLS      bool   `json:"tls"`
-	Nickname string `json:"nickname"`
-	Username string `json:"user"`
-	Password string `json:"password"`
+	Server           string `json:"server"`
+	TLS              bool   `json:"tls"`
+	Nickname         string `json:"nickname"`
+	Username         string `json:"user"`
+	Password         string `json:"password"`
+	NickservPassword string `json:"nickserv_password"`
 }
 
 type slackConfiguration struct {

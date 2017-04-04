@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 
-	"github.com/hreeder/slyrc/config"
 	"github.com/hreeder/slyrc/irc"
 	"github.com/nlopes/slack"
 	thojirc "github.com/thoj/go-ircevent"
@@ -13,12 +11,12 @@ import (
 // HandleAndRunSlack will set up the RTM instance,
 // Beginning the websocket and start handling incoming
 // events from the channel
-func HandleAndRunSlack(config config.Configuration, slackAPI *slack.Client, ircClient *thojirc.Connection) {
+func HandleAndRunSlack(slackAPI *slack.Client, ircClient *thojirc.Connection) {
 	rtm := slackAPI.NewRTM()
 	go rtm.ManageConnection()
 
 	for msg := range rtm.IncomingEvents {
-		fmt.Printf("Event: ")
+		// fmt.Printf("Event: ")
 		switch ev := msg.Data.(type) {
 		case *slack.HelloEvent:
 			// Nothing, ignore
@@ -43,7 +41,7 @@ func HandleAndRunSlack(config config.Configuration, slackAPI *slack.Client, ircC
 			if ev.Presence == "active" {
 				if _, ok := ircConnections[user.Name]; !ok {
 					// this is where we connect to IRC
-					ircConnections[user.Name] = irc.MakeIRCClient(user.Name, config)
+					ircConnections[user.Name] = irc.MakeIRCClient(user.Name, cfg)
 					ircConnections[user.Name].Connect()
 				}
 			}
@@ -58,13 +56,13 @@ func HandleAndRunSlack(config config.Configuration, slackAPI *slack.Client, ircC
 				continue
 			}
 
-			fmt.Printf("Message: %v\n", ev)
-			targetIRCChannel := GetChannel(config.Mappings, ev.Channel, "irc")
+			// fmt.Printf("Message: %v\n", ev)
+			targetIRCChannel := GetChannel(cfg.Mappings, ev.Channel, "irc")
 			user, _ := slackAPI.GetUserInfo(ev.User)
 			if targetIRCChannel != "" {
 				if _, ok := ircConnections[user.Name]; !ok {
 					// this is where we connect to IRC
-					ircConnections[user.Name] = irc.MakeIRCClient(user.Name, config)
+					ircConnections[user.Name] = irc.MakeIRCClient(user.Name, cfg)
 					ircConnections[user.Name].Connect()
 					ircConnections[user.Name].JoinChannel(targetIRCChannel)
 					ircConnections[user.Name].SendMessage(targetIRCChannel, ev.Text)
@@ -93,9 +91,9 @@ func HandleAndRunSlack(config config.Configuration, slackAPI *slack.Client, ircC
 			fmt.Printf("Invalid credentials")
 			return
 
-		default:
-			fmt.Printf("Unknown Type: %v", reflect.TypeOf(msg.Data))
-			fmt.Printf("Unknown: %v\n", ev)
+			// default:
+			// 	fmt.Printf("Unknown Type: %v", reflect.TypeOf(msg.Data))
+			// fmt.Printf("Unknown: %v\n", ev)
 		}
 	}
 }
