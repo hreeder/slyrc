@@ -2,6 +2,7 @@ package irc
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	config "github.com/hreeder/slyrc/config"
@@ -115,7 +116,10 @@ func (cl *SlyrcIRCClient) JoinChannel(channel string) {
 // SendMessage will send a message when ready
 func (cl *SlyrcIRCClient) SendMessage(destination string, message string) {
 	if cl.state == stateConnected {
-		cl.innerClient.Privmsg(destination, message)
+		parts := strings.Split(message, "\n")
+		for _, message := range parts {
+			cl.innerClient.Privmsg(destination, message)
+		}
 	} else {
 		p := &pendingMessage{channel: destination, message: message}
 		cl.pendingChannelMessages = append(cl.pendingChannelMessages, p)
